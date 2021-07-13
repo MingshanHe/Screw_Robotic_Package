@@ -4,7 +4,7 @@ project( Screw_Robotics_Package )
 set( CMAKE_BUILD_TYPE "Release" )
 set( CMAKE_CXX_FLAGS "-O3" )
 
-include_directories( "/usr/local/include/eigen3" )
+include_directories( /usr/local/include/eigen3)
 
 add_library(Screw_Robotics SHARED
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Screw_Robotics.cpp
