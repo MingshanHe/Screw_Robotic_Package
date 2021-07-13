@@ -10,7 +10,7 @@ add_library(Screw_Robotics SHARED
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Screw_Robotics.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Screw_Robotics.h)
 
-add_executable(eigenMatrix
+add_executable(Test
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Test.cpp)
 
-target_link_libraries(eigenMatrix Screw_Robotics)
+target_link_libraries(Test Screw_Robotics)
