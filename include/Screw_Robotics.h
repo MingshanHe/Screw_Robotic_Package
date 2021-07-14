@@ -81,6 +81,7 @@ namespace screw_robotics{
      *                          0,0,0,1]
     */
     Eigen::Matrix4d Rp2Trans(const Eigen::Matrix3d&, const Eigen::Vector3d&);
+
     /*
      * Function: Separate the rotation matrix and position vector from
      *           the transfomation matrix representation
@@ -89,5 +90,21 @@ namespace screw_robotics{
      * Returns: std::vector of rotationmatrix and position vector
     */
     std::vector<Eigen::MatrixXd> Trans2Rp(const Eigen::MatrixXd&);
+
+    /*
+     * Function: Translates a spatial velocity vector into a transformation matrix
+     * 功能：讲一个spatial速度向量转换至转换矩阵
+     * Inputs: Spatial velocity vector [angular velocity, linear velocity]
+     * Returns: Transformation matrix
+    */
+    Eigen::Matrix4d Vec2Se3(const Eigen::VectorXd&);
+
+    /*
+     * Function: Translates a transformation matrix into a spatial velocity vector
+     * 功能：将变换矩阵转变为一个spatial速度向量
+     * Inputs: Transformation matrix
+     * Returns: Spatial velocity vector [angular velocity, linear velocity]
+    */
+    Eigen::VectorXd Se32Vec(const Eigen::Matrix4d&);
 }
 #endif

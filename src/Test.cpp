@@ -111,6 +111,35 @@ void Trans2Rp_Test()
     else{ cout<<"Trans2Rp_Test: Failed"<<endl;}
 }
 
+void Vec2Se3_Test()
+{
+    Eigen::VectorXd V(6);
+    V << 1, 2, 3, 4, 5, 6;
+
+    Eigen::Vector3d exp(V(0), V(1), V(2));
+    Eigen::Vector3d linear(V(3), V(4), V(5));
+
+    Eigen::Matrix4d T;
+    T<< 0, -V(2), V(1), V(3),
+        V(2), 0, -V(0), V(4),
+        -V(1), V(0), 0, V(5),
+        0, 0, 0, 0;
+    if((Vec2Se3(V)-T).isZero()){ cout<<"Vec2Se3_Test: Pass"<<endl;}
+    else{ cout<<"Vec2Se3_Test: Failed"<<endl;}
+}
+
+void Se32Vec_Test()
+{
+    Eigen::Matrix4d T;
+    T <<    0, -3, 2, 4,
+            3, 0, -1, 5,
+            -2, 1, 0, 6,
+            0, 0, 0, 0;
+    Eigen::VectorXd V(6);
+    V << 1, 2, 3, 4, 5, 6;
+    if((Se32Vec(T)-V).isZero()){ cout<<"Se32Vec_Test: Pass"<<endl;}
+    else{ cout<<"Se32Vec_Test: Failed"<<endl;}
+}
 int main()
 {
     NearZero_Test();
@@ -122,5 +151,7 @@ int main()
     Ad_Test();
     Rp2Trans_Test();
     Trans2Rp_Test();
+    Vec2Se3_Test();
+    Se32Vec_Test();
     return 0;
 }
