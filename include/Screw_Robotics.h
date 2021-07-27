@@ -69,7 +69,13 @@ namespace screw_robotics{
     */
     Eigen::Matrix3d MatrixR_Exp3(const Eigen::Matrix3d&);
 
-    //TODO: Description
+    /*
+	 * Function: Calculate the 6x6 matrix [adV] of the given 6-vector
+     * 功能：通过给定的6维向量计算6*6矩阵[adV]
+	 * Input: Eigen::VectorXd (6x1)
+	 * Output: Eigen::MatrixXd (6x6)
+	 * Note: Can be used to calculate the Lie bracket [V1, V2] = [adV1]V2
+	 */
     Eigen::MatrixXd Ad(Eigen::VectorXd);
 
     /*

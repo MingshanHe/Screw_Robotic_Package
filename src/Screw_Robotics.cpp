@@ -89,7 +89,7 @@ namespace screw_robotics{
             return m_ret;
         }
     }
-    //TODO: Function Description
+    //*  Function: Calculate the 6x6 matrix [adV] of the given 6-vector
     Eigen::MatrixXd Ad(Eigen::VectorXd V)
     {
         Eigen::Matrix3d omega_mat = Vec2So3(Eigen::Vector3d(V(0), V(1), V(2)));
