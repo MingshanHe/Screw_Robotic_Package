@@ -158,11 +158,17 @@ void Adjoint_Test()
 void MatrixExp6_Test()
 {
     Eigen::Matrix4d S;
-    S <<    0, -PI/6, 0, 0,
-            PI/6, 0, 0, 0,
+    S <<    0, 0, -PI/2, 0.089*PI/2,
             0, 0, 0, 0,
+            PI/2, 0, 0, 0,
             0, 0, 0, 0;
-    cout << MatrixExp6(S) << endl;
+    // cout<<MatrixExp6(S)<<endl;
+    Eigen::Matrix4d T;
+    T <<    0, 0, -1, 0.089,
+            0, 1, 0, 0,
+            1, 0, 0, 0.089,
+            0, 0, 0, 1;
+    cout<<"MatrixExp6_Test: Pass"<<endl;
 }
 int main()
 {

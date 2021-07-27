@@ -178,14 +178,13 @@ namespace screw_robotics{
         {
             std::cout<<"2....."<<std::endl;
             double theta = (AxisAng3(omgtheta))(3);
-            Eigen::Matrix3d omg_mat = S.block<3,3>(0,0);
-            // std::cout<< omg_mat << std::endl;
-            Eigen::Matrix3d expExpand = Eigen::MatrixXd::Identity(3,3) * theta
-            + (1- std::cos(theta)) * omg_mat + ((theta - std::sin(theta)) * (omg_mat * omg_mat));
-            std::cout<< expExpand<< std::endl;
+            Eigen::Matrix3d omg_mat = S.block<3,3>(0,0) / theta;
+
+            Eigen::Matrix3d expExpand = Eigen::MatrixXd::Identity(3,3) * theta + (1- std::cos(theta)) * omg_mat + ((theta - std::sin(theta)) * (omg_mat * omg_mat));
+
             Eigen::Vector3d linear(S(0,3), S(1,3), S(2,3));
-            Eigen::Vector3d GThetaV = (expExpand * linear);
-            m_ret << MatrixExp3_R(omg_mat), GThetaV,
+            Eigen::Vector3d GThetaV = (expExpand * linear) / theta;
+            m_ret << MatrixExp3_R(omg_mat * theta), GThetaV,
                         0, 0, 0, 1;
             return m_ret;
         }
