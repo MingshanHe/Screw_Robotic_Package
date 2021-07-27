@@ -81,6 +81,7 @@ namespace screw_robotics{
      *                          0,0,0,1]
     */
     Eigen::Matrix4d Rp2Trans(const Eigen::Matrix3d&, const Eigen::Vector3d&);
+
     /*
      * Function: Separate the rotation matrix and position vector from
      *           the transfomation matrix representation
@@ -89,5 +90,38 @@ namespace screw_robotics{
      * Returns: std::vector of rotationmatrix and position vector
     */
     std::vector<Eigen::MatrixXd> Trans2Rp(const Eigen::MatrixXd&);
+
+    /*
+     * Function: Translates a spatial velocity vector into a transformation matrix
+     * 功能：讲一个spatial速度向量转换至转换矩阵
+     * Inputs: Spatial velocity vector [angular velocity, linear velocity]
+     * Returns: Transformation matrix
+    */
+    Eigen::Matrix4d Vec2Se3(const Eigen::VectorXd&);
+
+    /*
+     * Function: Translates a transformation matrix into a spatial velocity vector
+     * 功能：将变换矩阵转变为一个spatial速度向量
+     * Inputs: Transformation matrix
+     * Returns: Spatial velocity vector [angular velocity, linear velocity]
+    */
+    Eigen::VectorXd Se32Vec(const Eigen::Matrix4d&);
+
+    /*
+     * Function: Provides the adjoint representation of a transformation matrix
+     *              Used to change the frame of reference for spatial velocity vectors
+     * 功能：提供一个转换矩阵的伴随表示，利用其可以改变空间速度向量的参考坐标系，例如 w_s = Ad{T_sb} * w_b
+     * Inputs: 4*4 Trasformation matrix SE3
+     * Returns: 6*6 Adjoint Representation fo the matrix
+    */
+    Eigen::MatrixXd Adjoint(const Eigen::Matrix4d&);
+
+	/*
+     * Function: Rotation expanded for screw axis
+     * 功能：输入旋量S转换至旋转矩阵
+	 * Inputs: se3 matrix representation of exponential coordinates (transformation matrix)
+	 * Returns: 4x4 Matrix representing the rotation
+	 */
+	Eigen::Matrix4d MatrixExp6(const Eigen::Matrix4d&);
 }
 #endif

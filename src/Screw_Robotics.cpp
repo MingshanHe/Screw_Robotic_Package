@@ -125,5 +125,69 @@ namespace screw_robotics{
         Rp_ret.push_back(p_ret);
         return Rp_ret;
     }
-    
+    //* Function: Translates a spatial velocity vector into a transformation matrix
+    Eigen::Matrix4d Vec2Se3(const Eigen::VectorXd& V)
+    {
+        Eigen::Vector3d exp(V(0), V(1), V(2));
+        Eigen::Vector3d linear(V(3), V(4), V(5));
+
+        Eigen::Matrix4d m_ret;
+        m_ret <<    Vec2So3(exp), linear,
+                    0,0,0,0;
+
+        return m_ret;
+    }
+    //* Function: Translates a transformation matrix into a spatial velocity vector
+    Eigen::VectorXd Se32Vec(const Eigen::Matrix4d& T)
+    {
+        Eigen::VectorXd V(6);
+        V << T(2,1), T(0,2), T(1,0), T(0,3), T(1,3), T(2,3);
+
+        return V;
+    }
+    //* Function: Provides the adjoint representation of a transformation matrix
+    //*             Used to change the frame of reference for spatial velocity vectors
+    Eigen::MatrixXd Adjoint(const Eigen::Matrix4d& T)
+    {
+        std::vector<Eigen::MatrixXd> Rp = Trans2Rp(T);
+        Eigen::MatrixXd ad_ret(6,6);
+        Eigen::MatrixXd Zero = Eigen::MatrixXd::Zero(3,3);
+        ad_ret <<   Rp[0], Zero,
+                    Vec2So3(Rp[1])*Rp[0], Rp[0];
+
+        return ad_ret;
+    }
+    //* Function: Rotation expanded for screw axis
+    Eigen::Matrix4d MatrixExp6(const Eigen::Matrix4d& S)
+    {
+        Eigen::Matrix3d omg_mat   = S.block<3,3>(0,0);
+        Eigen::Vector3d omgtheta  = So32Vec(omg_mat);
+
+        Eigen::MatrixXd m_ret(4,4);
+
+        if(NearZero(omgtheta.norm()))
+        {
+            std::cout<<"1....."<<std::endl;
+            omg_mat = Eigen::MatrixXd::Identity(3,3);
+            omgtheta << S(0,3), S(1,3), S(2,3);
+            m_ret<< omg_mat, omgtheta,
+                    0, 0, 0, 1;
+            return m_ret;
+        }
+        else
+        {
+            std::cout<<"2....."<<std::endl;
+            double theta = (AxisAng3(omgtheta))(3);
+            Eigen::Matrix3d omg_mat = S.block<3,3>(0,0);
+            // std::cout<< omg_mat << std::endl;
+            Eigen::Matrix3d expExpand = Eigen::MatrixXd::Identity(3,3) * theta
+            + (1- std::cos(theta)) * omg_mat + ((theta - std::sin(theta)) * (omg_mat * omg_mat));
+            std::cout<< expExpand<< std::endl;
+            Eigen::Vector3d linear(S(0,3), S(1,3), S(2,3));
+            Eigen::Vector3d GThetaV = (expExpand * linear);
+            m_ret << MatrixExp3_R(omg_mat), GThetaV,
+                        0, 0, 0, 1;
+            return m_ret;
+        }
+    }
 }

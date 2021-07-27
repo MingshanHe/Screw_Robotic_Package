@@ -111,6 +111,59 @@ void Trans2Rp_Test()
     else{ cout<<"Trans2Rp_Test: Failed"<<endl;}
 }
 
+void Vec2Se3_Test()
+{
+    Eigen::VectorXd V(6);
+    V << 0, 0, 1, 2, 0, 0;
+    Eigen::Matrix4d T;
+    T <<    0, -1, 0, 2,
+            1, 0, -0, 0,
+            -0, 0, 0, 0,
+            0, 0, 0, 0;
+    if((Vec2Se3(V)-T).isZero()){cout<<"Vec2Se3_Test: Pass"<<endl;}
+    else{cout<<"Vec2Se3_Test: Failed"<<endl;}
+}
+
+void Se32Vec_Test()
+{
+    Eigen::Matrix4d T;
+    T <<    0, -1, 0, 2,
+            1, 0, -0, 0,
+            -0, 0, 0, 0,
+            0, 0, 0, 0;
+    Eigen::VectorXd V(6);
+    V << 0, 0, 1, 2, 0, 0;
+    if((Se32Vec(T)-V).isZero()){cout<<"Se32Vec_Test: Pass"<<endl;}
+    else{cout<<"Se32Vec_Test: Failed"<<endl;}
+}
+
+void Adjoint_Test()
+{
+    Eigen::Matrix4d T;
+    T<< 1, 0, 0, 1,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1;
+    Eigen::MatrixXd Ad(6,6);
+    Ad <<   1, 0, 0, 0, 0, 0,
+            0, 1, 0, 0, 0, 0,
+            0, 0, 1, 0, 0, 0,
+            0, 0, 0, 1, 0, 0,
+            0, 0, -1, 0, 1, 0,
+            0, 1, 0, 0, 0, 1;
+    if((Adjoint(T)-Ad).isZero()){cout<<"Adjoint_Test: Pass"<<endl;}
+    else{cout<<"Adjoint_Test: Failed"<<endl;}
+}
+
+void MatrixExp6_Test()
+{
+    Eigen::Matrix4d S;
+    S <<    0, -PI/6, 0, 0,
+            PI/6, 0, 0, 0,
+            0, 0, 0, 0,
+            0, 0, 0, 0;
+    cout << MatrixExp6(S) << endl;
+}
 int main()
 {
     NearZero_Test();
@@ -122,5 +175,11 @@ int main()
     Ad_Test();
     Rp2Trans_Test();
     Trans2Rp_Test();
+    //*--------------2021-7-27---------------*//
+    Vec2Se3_Test();
+    Se32Vec_Test();
+    Adjoint_Test();
+
+    MatrixExp6_Test();
     return 0;
 }
