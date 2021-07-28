@@ -184,6 +184,63 @@ void MatrixLog6_Test()
             0, 0, 0, 1;
     cout<< MatrixLog6(T)<<endl;
 }
+
+void FKinSpace_Test()
+{
+    //* Page: 148
+    Eigen::Matrix4d M;
+    //*---- UR -----*//
+    double L1,L2,W1,W2,H1,H2;
+
+    L1 = 0.425;
+    L2 = 0.392;
+    W1 = 0.109;
+    W2 = 0.082;
+    H1 = 0.089;
+    H2 = 0.095;
+
+    M <<    -1, 0, 0, L1+L2,
+            0, 0, 1,  W1+W2,
+            0, 1, 0,  H1-H2,
+            0, 0, 0,  1;
+    Eigen::MatrixXd Slist(6,6);
+    Slist <<    0, 0, 0, 0, 0, 0,
+                0, 1, 1, 1, 0, 1,
+                1, 0, 0, 0, -1, 0,
+                0, -H1, -H1, -H1, -W1, H2-H1,
+                0, 0, 0, 0, L1+L2, 0,
+                0, 0, L1, L1+L2, 0, L1+L2;
+    Eigen::VectorXd thetalist(6);
+    thetalist << 0, -PI/2, 0, 0, PI/2, 0;
+    cout << FKinSpace(M, Slist, thetalist) << endl;
+}
+void FKinBody_Test()
+{
+    //* Page: 152
+    Eigen::Matrix4d M;
+    //*---- WAM 7R ----*//
+    double L1, L2, L3, W1;
+
+    L1 = 0.55;
+    L2 = 0.3;
+    L3 = 0.06;
+    W1 = 0.045;
+
+    M <<    1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, L1 + L2 + L3,
+            0, 0, 0, 1;
+    Eigen::MatrixXd Blist(6,7);
+    Blist <<    0, 0, 0, 0, 0, 0, 0,
+                0, 1, 0, 1, 0, 1, 0,
+                1, 0, 1, 0, 1, 0, 1,
+                0, L1+L2+L3, 0, L2+L3, 0, L3, 0,
+                0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, W1, 0, 0, 0;
+    Eigen::VectorXd thetalist(7);
+    thetalist << 0, PI/4, 0, PI/4, 0, -PI, 0;
+    cout << FKinBody(M, Blist, thetalist) << endl;
+}
 int main()
 {
     NearZero_Test();
@@ -202,5 +259,8 @@ int main()
 
     MatrixExp6_Test();
     MatrixLog6_Test();
+
+    FKinSpace_Test();
+    FKinBody_Test();
     return 0;
 }

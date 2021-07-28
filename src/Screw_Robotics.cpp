@@ -167,7 +167,7 @@ namespace screw_robotics{
 
         if(NearZero(omgtheta.norm()))
         {
-            std::cout<<"1....."<<std::endl;
+            // std::cout<<"1....."<<std::endl;
             omg_mat = Eigen::MatrixXd::Identity(3,3);
             omgtheta << S(0,3), S(1,3), S(2,3);
             m_ret<< omg_mat, omgtheta,
@@ -176,12 +176,11 @@ namespace screw_robotics{
         }
         else
         {
-            std::cout<<"2....."<<std::endl;
+            // std::cout<<"2....."<<std::endl;
             double theta = (AxisAng3(omgtheta))(3);
             Eigen::Matrix3d omg_mat = S.block<3,3>(0,0) / theta;
 
             Eigen::Matrix3d expExpand = Eigen::MatrixXd::Identity(3,3) * theta + (1- std::cos(theta)) * omg_mat + ((theta - std::sin(theta)) * (omg_mat * omg_mat));
-            std::cout<<expExpand<<std::endl;
             Eigen::Vector3d linear(S(0,3), S(1,3), S(2,3));
             Eigen::Vector3d GThetaV = (expExpand * linear) / theta;
             // m_ret << MatrixExp3_R(omg_mat), GThetaV,
@@ -191,7 +190,7 @@ namespace screw_robotics{
             return m_ret;
         }
     }
-
+    //* Function: Rotation transform to screw axis
     Eigen::Matrix4d MatrixLog6(const Eigen::Matrix4d& T)
     {
         Eigen::Matrix4d S;
@@ -201,18 +200,38 @@ namespace screw_robotics{
 
         if (NearZero(omgmat.norm()))
         {
-            std::cout<<"1....."<<std::endl;
+            // std::cout<<"1....."<<std::endl;
             S << zeros3d, Rp[1],
                     0, 0, 0, 0;
         }
         else
         {
-            std::cout<<"2....."<<std::endl;
+            // std::cout<<"2....."<<std::endl;
             double theta = std::acos((Rp[0].trace() - 1) / 2.0);
             Eigen::Matrix3d logExpand  = (Eigen::MatrixXd::Identity(3,3) * theta + (1- std::cos(theta)) * omgmat / theta + ((theta - std::sin(theta)) * ((omgmat/theta) * (omgmat/theta)))).inverse();
             S << omgmat, logExpand*(Rp[1]*theta),
                     0, 0, 0, 0;
         }
         return S;
+    }
+    //* Function: Compute end effector frame (used for current spatial position calculation)
+    Eigen::Matrix4d FKinSpace(const Eigen::Matrix4d& M, const Eigen::MatrixXd& Slist, const Eigen::VectorXd& thetalist)
+    {
+        Eigen::Matrix4d T = M;
+        for (int i = (thetalist.size() - 1); i > -1; i--)
+        {
+            T = MatrixExp6(Vec2Se3(Slist.col(i)*thetalist(i)))*T;
+        }
+        return T;
+    }
+
+    Eigen::Matrix4d FKinBody(const Eigen::Matrix4d& M, const Eigen::MatrixXd& Blist, const Eigen::VectorXd& thetalist)
+    {
+        Eigen::Matrix4d T = M;
+        for (int i = 0; i < thetalist.size(); i++)
+        {
+            T = T * MatrixExp6(Vec2Se3(Blist.col(i)*thetalist(i)));
+        }
+        return T;
     }
 }

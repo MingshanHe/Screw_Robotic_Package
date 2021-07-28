@@ -130,6 +130,33 @@ namespace screw_robotics{
 	 */
 	Eigen::Matrix4d MatrixExp6(const Eigen::Matrix4d&);
 
+	/*
+     * Function: Rotation transform to screw axis
+     * 功能：输入旋量矩阵转换至旋转S向量
+	 * Inputs: 4x4 Matrix representing the rotation
+	 * Returns: se3 matrix representation of exponential coordinates (transformation matrix)
+	 */
     Eigen::Matrix4d MatrixLog6(const Eigen::Matrix4d&);
+
+    /*
+     * Function: Compute end effector frame (used for current spatial position calculation)
+     * 功能：计算末端执行器坐标系的姿态矩阵（正运动学）
+	 * Inputs: Home configuration (position and orientation) of end-effector
+	 *		   The joint screw axes in the space frame when the manipulator
+	 *             is at the home position
+	 * 		   A list of joint coordinates.
+	 * Returns: Transfomation matrix representing the end-effector frame when the joints are
+	 *				at the specified coordinates
+	 * Notes: FK means Forward Kinematics
+	 */
+    Eigen::Matrix4d FKinSpace(
+        const Eigen::Matrix4d& ,
+        const Eigen::MatrixXd& ,
+        const Eigen::VectorXd& );
+
+    Eigen::Matrix4d FKinBody(
+        const Eigen::Matrix4d& ,
+        const Eigen::MatrixXd& ,
+        const Eigen::VectorXd& );
 }
 #endif
