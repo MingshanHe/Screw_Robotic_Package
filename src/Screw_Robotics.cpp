@@ -181,12 +181,38 @@ namespace screw_robotics{
             Eigen::Matrix3d omg_mat = S.block<3,3>(0,0) / theta;
 
             Eigen::Matrix3d expExpand = Eigen::MatrixXd::Identity(3,3) * theta + (1- std::cos(theta)) * omg_mat + ((theta - std::sin(theta)) * (omg_mat * omg_mat));
-
+            std::cout<<expExpand<<std::endl;
             Eigen::Vector3d linear(S(0,3), S(1,3), S(2,3));
             Eigen::Vector3d GThetaV = (expExpand * linear) / theta;
+            // m_ret << MatrixExp3_R(omg_mat), GThetaV,
+            //             0, 0, 0, 1;
             m_ret << MatrixExp3_R(omg_mat * theta), GThetaV,
                         0, 0, 0, 1;
             return m_ret;
         }
+    }
+
+    Eigen::Matrix4d MatrixLog6(const Eigen::Matrix4d& T)
+    {
+        Eigen::Matrix4d S;
+        auto Rp = screw_robotics::Trans2Rp(T);
+        Eigen::Matrix3d omgmat = screw_robotics::MatrixR_Exp3(Rp[0]);
+        Eigen::Matrix3d zeros3d = Eigen::Matrix3d::Zero(3,3);
+
+        if (NearZero(omgmat.norm()))
+        {
+            std::cout<<"1....."<<std::endl;
+            S << zeros3d, Rp[1],
+                    0, 0, 0, 0;
+        }
+        else
+        {
+            std::cout<<"2....."<<std::endl;
+            double theta = std::acos((Rp[0].trace() - 1) / 2.0);
+            Eigen::Matrix3d logExpand  = (Eigen::MatrixXd::Identity(3,3) * theta + (1- std::cos(theta)) * omgmat / theta + ((theta - std::sin(theta)) * ((omgmat/theta) * (omgmat/theta)))).inverse();
+            S << omgmat, logExpand*(Rp[1]*theta),
+                    0, 0, 0, 0;
+        }
+        return S;
     }
 }

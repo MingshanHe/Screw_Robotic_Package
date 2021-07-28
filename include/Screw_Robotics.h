@@ -99,7 +99,7 @@ namespace screw_robotics{
 
     /*
      * Function: Translates a spatial velocity vector into a transformation matrix
-     * 功能：讲一个spatial速度向量转换至转换矩阵
+     * 功能：将一个spatial速度向量转换至转换矩阵
      * Inputs: Spatial velocity vector [angular velocity, linear velocity]
      * Returns: Transformation matrix
     */
@@ -129,5 +129,7 @@ namespace screw_robotics{
 	 * Returns: 4x4 Matrix representing the rotation
 	 */
 	Eigen::Matrix4d MatrixExp6(const Eigen::Matrix4d&);
+
+    Eigen::Matrix4d MatrixLog6(const Eigen::Matrix4d&);
 }
 #endif

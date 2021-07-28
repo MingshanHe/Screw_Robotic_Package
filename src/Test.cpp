@@ -162,13 +162,27 @@ void MatrixExp6_Test()
             0, 0, 0, 0,
             PI/2, 0, 0, 0,
             0, 0, 0, 0;
-    // cout<<MatrixExp6(S)<<endl;
+    MatrixExp6(S);
     Eigen::Matrix4d T;
     T <<    0, 0, -1, 0.089,
             0, 1, 0, 0,
             1, 0, 0, 0.089,
             0, 0, 0, 1;
     cout<<"MatrixExp6_Test: Pass"<<endl;
+}
+
+void MatrixLog6_Test()
+{
+    Eigen::Matrix4d T;
+    // T <<    0.540302, 0, -0.841471, 0.089,
+    //         0, 1, 0, 0,
+    //         0.841471, 0, 0.540302, 0.089,
+    //         0, 0, 0, 1;
+    T <<    0, 0, -1, 0.089,
+            0, 1, 0, 0,
+            1, 0, 0, 0.089,
+            0, 0, 0, 1;
+    cout<< MatrixLog6(T)<<endl;
 }
 int main()
 {
@@ -187,5 +201,6 @@ int main()
     Adjoint_Test();
 
     MatrixExp6_Test();
+    MatrixLog6_Test();
     return 0;
 }
