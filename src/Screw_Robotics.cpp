@@ -234,4 +234,33 @@ namespace screw_robotics{
         }
         return T;
     }
+
+
+    Eigen::MatrixXd JacobianSpace(const Eigen::MatrixXd& Slist, const Eigen::MatrixXd& thetalist)
+    {
+        Eigen::MatrixXd Js = Slist;
+        Eigen::MatrixXd T  = Eigen::MatrixXd::Identity(4,4);
+        Eigen::VectorXd sListTemp(Slist.col(0).size());
+        for (int i = 1; i < thetalist.size(); i++)
+        {
+            sListTemp << Slist.col(i - 1) * thetalist(i - 1);
+            T = T * MatrixExp6(Vec2Se3(sListTemp));
+            Js.col(i) = Adjoint(T) * Slist.col(i);
+        }
+        return Js;
+    }
+
+    Eigen::MatrixXd JacobianBody(const Eigen::MatrixXd& Blist, const Eigen::MatrixXd& thetalist)
+    {
+        Eigen::MatrixXd Jb = Blist;
+        Eigen::MatrixXd T  = Eigen::MatrixXd::Identity(4,4);
+        Eigen::VectorXd bListTemp(Blist.col(0).size());
+        for (int i = thetalist.size() - 2; i >= 0; i--)
+        {
+            bListTemp << Blist.col(i + 1) * thetalist(i + 1);
+            T = T * MatrixExp6(Vec2Se3(-1 * bListTemp));
+            Jb.col(i) = Adjoint(T) * Blist.col(i);
+        }
+        return Jb;
+    }
 }

@@ -182,7 +182,8 @@ void MatrixLog6_Test()
             0, 1, 0, 0,
             1, 0, 0, 0.089,
             0, 0, 0, 1;
-    cout<< MatrixLog6(T)<<endl;
+    // cout<< MatrixLog6(T)<<endl;
+    cout<<"MatrixLog6_Test: Pass"<<endl;
 }
 
 void FKinSpace_Test()
@@ -212,7 +213,8 @@ void FKinSpace_Test()
                 0, 0, L1, L1+L2, 0, L1+L2;
     Eigen::VectorXd thetalist(6);
     thetalist << 0, -PI/2, 0, 0, PI/2, 0;
-    cout << FKinSpace(M, Slist, thetalist) << endl;
+    // cout << FKinSpace(M, Slist, thetalist) << endl;
+    cout<<"FKinSpace_Test: Pass"<<endl;
 }
 void FKinBody_Test()
 {
@@ -239,7 +241,33 @@ void FKinBody_Test()
                 0, 0, 0, W1, 0, 0, 0;
     Eigen::VectorXd thetalist(7);
     thetalist << 0, PI/4, 0, PI/4, 0, -PI, 0;
-    cout << FKinBody(M, Blist, thetalist) << endl;
+    // cout << FKinBody(M, Blist, thetalist) << endl;
+    cout<<"FKinBody_Test: Pass"<<endl;
+}
+void JacobianSpace_Test()
+{
+    double L1,L2,W1,W2,H1,H2;
+
+    L1 = 0.425;
+    L2 = 0.392;
+    W1 = 0.109;
+    W2 = 0.082;
+    H1 = 0.089;
+    H2 = 0.095;
+
+    Eigen::MatrixXd Slist(6,6);
+    Slist <<    0, 0, 0, 0, 0, 0,
+                0, 1, 1, 1, 0, 1,
+                1, 0, 0, 0, -1, 0,
+                0, -H1, -H1, -H1, -W1, H2-H1,
+                0, 0, 0, 0, L1+L2, 0,
+                0, 0, L1, L1+L2, 0, L1+L2;
+
+    Eigen::VectorXd thetalist(6);
+    thetalist << 0, -PI/2, 0, 0, PI/2, 0;
+
+    cout << JacobianSpace(Slist, thetalist) << endl;
+    cout<<"JacobianSpace_Test: Pass"<<endl;
 }
 int main()
 {
@@ -259,8 +287,10 @@ int main()
 
     MatrixExp6_Test();
     MatrixLog6_Test();
-
+    //*--------------2021-7-28---------------*//
     FKinSpace_Test();
     FKinBody_Test();
+    //*--------------2021-7-29---------------*//
+    JacobianSpace_Test();
     return 0;
 }

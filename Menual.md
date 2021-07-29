@@ -46,7 +46,57 @@
 
   Returns: The axis and angle of rotation as [x, y, z, theta]
 
+# F
 
+## FKinSpace()
+
+* **<font color='red'>Eigen::Matrix4d</font> FKinSpace(<font color='green'>const Eigen::Matrix4d</font>& M, <font color='green'>const Eigen::MatrixXd</font>& Slist, <font color='green'>const Eigen::VectorXd</font>& thetalist)**
+
+  Function: Compute end effector frame (used for current spatial position calculation)
+
+  功能：计算末端执行器坐标系的姿态矩阵（正运动学）
+
+  Inputs: Home configuration (position and orientation) of end-effector
+
+  ​              The joint screw axes in the space frame when the manipulator is at the home position A list of joint coordinates.
+
+  Returns: Transfomation matrix representing the end-effector frame when the joints are at the specified coordinates
+
+  Notes: FK means Forward Kinematics
+
+## FKinBody()
+
+* **<font color='red'>Eigen::Matrix4d</font> FKinBody(<font color='green'>const Eigen::Matrix4d</font>& M, <font color='green'>const Eigen::MatrixXd</font>& Blist, <font color='green'>const Eigen::VectorXd</font>& thetalist)**
+
+# J
+
+##  JacobianSpace()
+
+* **<font color='red'>Eigen::MatrixXd</font> JacobianSpace(<font color='green'>const Eigen::MatrixXd</font>& Slist, <font color='green'>const Eigen::MatrixXd</font>& thetalist)**
+
+  Function: Gives the space Jacobian
+
+  功能：获得一个空间坐标系下的雅克比矩阵
+
+  Inputs: Screw axis in home position, joint configuration
+
+  Returns: 6xn Spatial Jacobian
+
+  Page: 180 & Page: 100 Definition 3.20
+
+## JacobianBody()
+
+* **<font color='red'>Eigen::MatrixXd</font> JacobianBody(<font color='green'>const Eigen::MatrixXd</font>& Blist, <font color='green'>const Eigen::MatrixXd</font>& thetalist)**
+
+  Function: Gives the body Jacobian
+
+  功能：获得一个物体坐标系下的雅克比矩阵
+
+  Inputs: Screw axis in BODY position, joint configuration
+
+  Returns: 6xn Bobdy Jacobian
+
+  Page: 185 & Page: 100 Definition 3.20
 
 # M
 

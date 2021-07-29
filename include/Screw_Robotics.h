@@ -120,6 +120,7 @@ namespace screw_robotics{
      * Inputs: 4*4 Trasformation matrix SE3
      * Returns: 6*6 Adjoint Representation fo the matrix
     */
+    //* Page: 100
     Eigen::MatrixXd Adjoint(const Eigen::Matrix4d&);
 
 	/*
@@ -149,14 +150,36 @@ namespace screw_robotics{
 	 *				at the specified coordinates
 	 * Notes: FK means Forward Kinematics
 	 */
+    //* Page: 148
     Eigen::Matrix4d FKinSpace(
         const Eigen::Matrix4d& ,
         const Eigen::MatrixXd& ,
         const Eigen::VectorXd& );
-
+    //* Page: 152
     Eigen::Matrix4d FKinBody(
         const Eigen::Matrix4d& ,
         const Eigen::MatrixXd& ,
         const Eigen::VectorXd& );
+
+    /*
+     * Function: Gives the space Jacobian
+     * 功能：获得一个空间坐标系下的雅克比矩阵
+	 * Inputs: Screw axis in home position, joint configuration
+	 * Returns: 6xn Spatial Jacobian
+	 */
+    //* Page: 180 & Page: 100 Definition 3.20
+    Eigen::MatrixXd JacobianSpace(
+        const Eigen::MatrixXd& ,
+        const Eigen::MatrixXd& );
+	/*
+	 * Function: Gives the body Jacobian
+     * 功能：获得一个物体坐标系下的雅克比矩阵
+	 * Inputs: Screw axis in BODY position, joint configuration
+	 * Returns: 6xn Bobdy Jacobian
+	 */
+    //* Page: 185 & Page: 100 Definition 3.20
+    Eigen::MatrixXd JacobianBody(
+        const Eigen::MatrixXd& ,
+        const Eigen::MatrixXd& );
 }
 #endif
