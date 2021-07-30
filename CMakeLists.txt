@@ -1,6 +1,8 @@
 cmake_minimum_required( VERSION 3.21 )
 project( Screw_Robotics_Package )
 
+add_compile_options(-std=c++11)
+
 set( CMAKE_BUILD_TYPE "Release" )
 set( CMAKE_CXX_FLAGS "-O3" )
 

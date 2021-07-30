@@ -224,7 +224,7 @@ namespace screw_robotics{
         }
         return T;
     }
-
+    //* Function: Compute end effector frame (used for current spatial position calculation)
     Eigen::Matrix4d FKinBody(const Eigen::Matrix4d& M, const Eigen::MatrixXd& Blist, const Eigen::VectorXd& thetalist)
     {
         Eigen::Matrix4d T = M;
@@ -235,7 +235,7 @@ namespace screw_robotics{
         return T;
     }
 
-
+    //* Function: Gives the space Jacobian
     Eigen::MatrixXd JacobianSpace(const Eigen::MatrixXd& Slist, const Eigen::MatrixXd& thetalist)
     {
         Eigen::MatrixXd Js = Slist;
@@ -249,7 +249,7 @@ namespace screw_robotics{
         }
         return Js;
     }
-
+    //* Function: Gives the body Jacobian
     Eigen::MatrixXd JacobianBody(const Eigen::MatrixXd& Blist, const Eigen::MatrixXd& thetalist)
     {
         Eigen::MatrixXd Jb = Blist;
@@ -262,5 +262,78 @@ namespace screw_robotics{
             Jb.col(i) = Adjoint(T) * Blist.col(i);
         }
         return Jb;
+    }
+    //* Function: Inverts a homogeneous transformation matrix
+    Eigen::Matrix4d TransInv(const Eigen::Matrix4d& transform)
+    {
+        auto Rp = Trans2Rp(transform);
+        auto Rt = Rp[0].transpose();
+        auto t  = -(Rt * Rp[1]);
+        Eigen::MatrixXd inv(4,4);
+        inv = Eigen::MatrixXd::Zero(4,4);
+        inv.block(0, 0, 3, 3) = Rt;
+        inv.block(0, 3, 3, 1) = t;
+        inv(3,3) = 1;
+        return inv;
+    }
+    //* Function: Inverts a rotation matrix
+    Eigen::MatrixXd RotInv(const Eigen::MatrixXd& rotMatrix)
+    {
+        return rotMatrix.transpose();
+    }
+    //* Function: Takes a parametric description of a screw axis and converts
+    //*           it to a normalized screw axis
+    Eigen::VectorXd Screw2Axis(Eigen::Vector3d q, Eigen::Vector3d s, double h)
+    {
+        Eigen::VectorXd axis(6);
+        axis.segment(0, 3) = s;
+        axis.segment(3, 3) = q.cross(s) + (h * s);
+        return axis;
+    }
+    //* Function: Translates a 6-vector of exponential coordinates into screw axis-angle form
+    Eigen::VectorXd AxisAng6(const Eigen::VectorXd& expc6)
+    {
+        Eigen::VectorXd v_ret(7);
+        double theta = Eigen::Vector3d(expc6(0), expc6(1), expc6(2)).norm();
+        if(NearZero(theta))
+        {
+            theta = Eigen::Vector3d(expc6(3), expc6(4), expc6(5)).norm();
+        }
+        v_ret << expc6 / theta, theta;
+        return v_ret;
+    }
+
+    bool IKinSpace(
+        const Eigen::MatrixXd& Slist,
+        const Eigen::MatrixXd& M,
+        const Eigen::MatrixXd& T,
+        Eigen::VectorXd& thetalist,
+        double eomg,
+        double ev)
+    {
+        int i = 0;
+        int maxiterations = 20;
+        Eigen::MatrixXd Tfk     = FKinSpace(M, Slist, thetalist);
+        Eigen::MatrixXd Tdiff   = TransInv(Tfk)*T;
+        Eigen::VectorXd Vs      = Adjoint(Tfk)*Se32Vec(MatrixLog6(Tdiff));
+        Eigen::Vector3d angular(Vs(0), Vs(1), Vs(2));
+        Eigen::Vector3d linear(Vs(3), Vs(4), Vs(5));
+
+        bool err = (angular.norm() > eomg || linear.norm() > ev);
+        Eigen::MatrixXd Js;
+        while(err && i < maxiterations)
+        {
+            Js = JacobianSpace(Slist, thetalist);
+            thetalist += Js.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(Vs);
+            i += 1;
+            Tfk     = FKinSpace(M, Slist, thetalist);
+            Tdiff   = TransInv(Tfk) * T;
+            Vs      = Adjoint(Tfk)*Se32Vec(MatrixLog6(Tdiff));
+            angular = Eigen::Vector3d(Vs(0), Vs(1), Vs(2));
+            linear  = Eigen::Vector3d(Vs(3), Vs(4), Vs(5));
+            err = (angular.norm()>eomg || linear.norm() > ev);
+        }
+        std::cout<< thetalist << std::endl;
+        return !err;
     }
 }

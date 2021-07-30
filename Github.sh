@@ -1,5 +1,5 @@
 #！/bin/bash
 echo "Github Push Demo"
 git add .
-git commit -m "2021/7/29 commit"
+git commit -m "$(date) update"
 git push -f origin master

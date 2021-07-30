@@ -266,8 +266,91 @@ void JacobianSpace_Test()
     Eigen::VectorXd thetalist(6);
     thetalist << 0, -PI/2, 0, 0, PI/2, 0;
 
-    cout << JacobianSpace(Slist, thetalist) << endl;
+    // cout << JacobianSpace(Slist, thetalist) << endl;
     cout<<"JacobianSpace_Test: Pass"<<endl;
+}
+void TransInv_Test()
+{
+    Eigen::Matrix4d T;
+    T <<    0, 0, -1, 0.089,
+            0, 1, 0, 0,
+            1, 0, 0, 0.089,
+            0, 0, 0, 1;
+    // cout<<TransInv(T)*T<<endl;
+    cout<<"TransInv_Test: Pass"<<endl;
+}
+void RotInv_Test()
+{
+    Eigen::Matrix4d T;
+    T <<    0, 0, -1, 0.089,
+            0, 1, 0, 0,
+            1, 0, 0, 0.089,
+            0, 0, 0, 1;
+    // cout<<RotInv(T)<<endl;
+    cout<<"RotInv_Test: Pass"<<endl;
+}
+void Screw2Axis_Test()
+{
+}
+void IKinSpace_Test()
+{
+    //*---- UR -----*//
+    // Eigen::Matrix4d M;
+    // Eigen::Matrix4d T;
+    // double L1,L2,W1,W2,H1,H2;
+
+    // L1 = 0.425;
+    // L2 = 0.392;
+    // W1 = 0.109;
+    // W2 = 0.082;
+    // H1 = 0.089;
+    // H2 = 0.095;
+
+    // M <<    -1, 0, 0, L1+L2,
+    //         0, 0, 1,  W1+W2,
+    //         0, 1, 0,  H1-H2,
+    //         0, 0, 0,  1;
+
+    // T <<    0, 0, -1, 0.660729,
+    //         0, 1, 0, 0,
+    //         1, 0, 0, 0.402089,
+    //         0, 0, 0, 1;
+    // Eigen::MatrixXd Slist(6,6);
+    // Slist <<    0, 0, 0, 0, 0, 0,
+    //             0, 1, 1, 1, 0, 1,
+    //             1, 0, 0, 0, -1, 0,
+    //             0, -H1, -H1, -H1, -W1, H2-H1,
+    //             0, 0, 0, 0, L1+L2, 0,
+    //             0, 0, L1, L1+L2, 0, L1+L2;
+    // Eigen::VectorXd thetalist(6);
+    // thetalist << 0, -PI/3, 0, 0, PI/3, 0;
+    // cout<< IKinSpace(Slist, M, T, thetalist, 0.01, 0.01) << endl;
+    Eigen::MatrixXd SlistT(3, 6);
+    SlistT  <<  0, 0, 1, 4, 0, 0,
+                0, 0, 0, 0, 1, 0,
+                0, 0, -1, -6, 0, -0.1;
+	Eigen::MatrixXd Slist = SlistT.transpose();
+	Eigen::Matrix4d M;
+	M << -1, 0, 0, 0,
+		0, 1, 0, 6,
+		0, 0, -1, 2,
+		0, 0, 0, 1;
+	Eigen::Matrix4d T;
+	T << 0, 1, 0, -5,
+		1, 0, 0, 4,
+		0, 0, -1, 1.6858,
+		0, 0, 0, 1;
+	Eigen::VectorXd thetalist(3);
+	thetalist << 1.5, 2.5, 3;
+	double eomg = 0.01;
+	double ev = 0.001;
+	bool b_result = true;
+	Eigen::VectorXd theta_result(3);
+	theta_result << 1.57073783, 2.99966384, 3.1415342;
+	bool iRet = IKinSpace(Slist, M, T, thetalist, eomg, ev);
+    cout<< iRet << endl;
+	// ASSERT_EQ(b_result, iRet);
+	// ASSERT_TRUE(thetalist.isApprox(theta_result, 4));
 }
 int main()
 {
@@ -292,5 +375,10 @@ int main()
     FKinBody_Test();
     //*--------------2021-7-29---------------*//
     JacobianSpace_Test();
+    //*--------------2021-7-30---------------*//
+    TransInv_Test();
+    RotInv_Test();
+    Screw2Axis_Test();
+    IKinSpace_Test();
     return 0;
 }
