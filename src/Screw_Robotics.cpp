@@ -302,7 +302,7 @@ namespace screw_robotics{
         v_ret << expc6 / theta, theta;
         return v_ret;
     }
-
+    //* Function: Computes inverse kinematics in the space frame for an open chain robot
     bool IKinSpace(
         const Eigen::MatrixXd& Slist,
         const Eigen::MatrixXd& M,
@@ -333,7 +333,40 @@ namespace screw_robotics{
             linear  = Eigen::Vector3d(Vs(3), Vs(4), Vs(5));
             err = (angular.norm()>eomg || linear.norm() > ev);
         }
-        std::cout<< thetalist << std::endl;
+        // std::cout<< thetalist << std::endl;
+        return !err;
+    }
+    bool IKinBody(
+        const Eigen::MatrixXd& Blist,
+        const Eigen::MatrixXd& M,
+        const Eigen::MatrixXd& T,
+        Eigen::VectorXd& thetalist,
+        double eomg,
+        double ev)
+    {
+        int i = 0;
+        int maxiterations = 20;
+        Eigen::MatrixXd Tfk = FKinBody(M, Blist, thetalist);
+        Eigen::MatrixXd Tdiff = TransInv(Tfk) * T;
+        Eigen::VectorXd Vb = Se32Vec(MatrixLog6(Tdiff));
+        Eigen::Vector3d angular(Vb(0), Vb(1), Vb(2));
+        Eigen::Vector3d linear(Vb(3), Vb(4), Vb(5));
+
+        bool err = (angular.norm() > eomg || linear.norm() > ev);
+        Eigen::MatrixXd Jb;
+        while(err && i < maxiterations)
+        {
+            Jb = JacobianBody(Blist, thetalist);
+            thetalist += Jb.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(Vb);
+            i += 1;
+            Tfk = FKinBody(M, Blist, thetalist);
+            Tdiff = TransInv(Tfk) * T;
+            Vb = Se32Vec(MatrixLog6(Tdiff));
+            angular = Eigen::Vector3d(Vb(0), Vb(1), Vb(2));
+            linear  = Eigen::Vector3d(Vb(3), Vb(4), Vb(5));
+            err = (angular.norm() > eomg || linear.norm() > ev);
+        }
+        // std::cout<< thetalist << std::endl;
         return !err;
     }
 }
