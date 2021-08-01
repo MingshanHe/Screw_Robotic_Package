@@ -46,6 +46,18 @@
 
   Returns: The axis and angle of rotation as [x, y, z, theta]
 
+## AxisAng6()
+
+* **<font color='red'>Eigen::VectorXd</font> AxisAng6(<font color='green'>const Eigen::VectorXd</font>& expc6)**
+
+  Function: Translates a 6-vector of exponential coordinates into screw axis-angle form
+
+  Inputs:
+
+  ​	expc6: A 6-vector of exponential coordinates for rigid-body motion S*theta
+
+  Returns: The corresponding normalized screw axis S; The distance theta traveled along/about S in form [S,theta]
+
 # F
 
 ## FKinSpace()
@@ -56,9 +68,7 @@
 
   功能：计算末端执行器坐标系的姿态矩阵（正运动学）
 
-  Inputs: Home configuration (position and orientation) of end-effector
-
-  ​              The joint screw axes in the space frame when the manipulator is at the home position A list of joint coordinates.
+  Inputs: Home configuration (position and orientation) of end-effector. The joint screw axes in the space frame when the manipulator is at the home position A list of joint coordinates.
 
   Returns: Transfomation matrix representing the end-effector frame when the joints are at the specified coordinates
 
@@ -67,6 +77,62 @@
 ## FKinBody()
 
 * **<font color='red'>Eigen::Matrix4d</font> FKinBody(<font color='green'>const Eigen::Matrix4d</font>& M, <font color='green'>const Eigen::MatrixXd</font>& Blist, <font color='green'>const Eigen::VectorXd</font>& thetalist)**
+
+
+
+# I
+
+##     IKinSpace()
+
+* **<font color='red'>bool IKinSpace</font>(<font color='green'>const Eigen::MatrixXd</font>& Slist, <font color='green'>const Eigen::MatrixXd</font>& M, <font color='green'>const Eigen::MatrixXd</font>& T,<font color='green'>Eigen::VectorXd</font>& thetalist, <font color='green'>double</font> eomg, <font color='green'>double</font> ev)**
+
+  Function: Computes inverse kinematics in the space frame for an open chain robot
+
+  Inputs:
+
+  ​	Slist: The joint screw axis in the space frame when the manipulator is at the home position, in the format of a matrix with axis as the columns
+
+  ​	M: The home cofiguration of the end-effector
+
+  ​	T: The desired end-effector configuration Tsd
+
+  ​	thetalist\[in][out]: An initial guess and result output of joint angles that are close to satisfying Tsd
+
+  ​	emog: A small positive tolerance on the end-effector orientation error. The returned joint angles must give an end-effector orientation error less than eomg.
+
+  ​	ev: A small positive tolerance on the end-effector linear position error. The returned joint angles must give an end-effector position error less than ev.
+
+  Outputs:
+
+  ​	success: A logical value where TRUE means that the function found a solution and FALSE means that it ran through the set number of maximum iterations without finding a solution within the tolerances eomg and ev.
+
+  ​	thetalist\[in][out]: joint angles that achieve T within the specified tolerances.
+
+##     IKinBody()
+
+* **<font color='red'>bool IKinBody</font>(<font color='green'>const Eigen::MatrixXd</font>& Blist, <font color='green'>const Eigen::MatrixXd</font>& M, <font color='green'>const Eigen::MatrixXd</font>& T, <font color='green'>Eigen::VectorXd</font>& thetalist, <font color='green'>double</font> eomg, <font color='green'>double</font> ev)**
+
+  Function: Computes inverse kinematics in the body frame for an open chain robot
+
+  Inputs:
+
+  ​	Blist: The joint screw axes in the end-effector frame when the manipulator is at the home position, in the format of a matrix with axes as the columns
+
+  ​	M: The home configuration of the end-effector
+
+  ​	T: The desired end-effector configuration Tsd
+
+  ​	thetalist\[in][out]: An initial guess and result output of joint angles that are close to satisfying Tsd
+
+  ​	emog: A small positive tolerance on the end-effector orientation error. The returned joint angles must give an end-effector orientation error less than eomg
+
+  ​	ev: A small positive tolerance on the end-effector linear position error. The returned joint angles must give an end-effector position error less than ev
+
+  Outputs:
+
+  ​	success: A logical value where TRUE means that the function found a solution and FALSE means that it ran through the set number of maximum iterations without finding a solution within the tolerances eomg and ev.
+
+  ​	thetalist\[in][out]: Joint angles that achieve T within the specified tolerances,
 
 # J
 
@@ -170,7 +236,15 @@
 
   ​                                      0,0,0,1]
 
+## RotInv()
 
+* **<font color='red'>Eigen::MatrixXd</font> RotInv(<font color='green'>const Eigen::MatrixXd</font>& rotMatrix)**
+
+  Function: Inverts a rotation matrix
+
+  Inputs: A rotation matrix R
+
+  Returns: The inverse of R
 
 # S
 
@@ -200,7 +274,23 @@
 
   Returns: Spatial velocity vector [angular velocity, linear velocity]
 
+## Screw2Axis()
 
+* **<font color='red'>Eigen::VectorXd</font> Screw2Axis(<font color='green'>Eigen::Vector3d</font> q, <font color='green'>Eigen::Vector3d</font> s, <font color='green'>double</font> h)**
+
+  Function: Takes a parametric description of a screw axis and converts
+
+  ​		           it to a normalized screw axis
+
+  Inputs:
+
+  ​	q: A point lying on the screw axis
+
+  ​	s: A unit vector in the direction of the screw axis
+
+  ​	h: The pitch of the screw axis
+
+  Returns: A normalized screw axis described by the input
 
 # T
 
@@ -218,7 +308,15 @@
 
   Returns: std::vector of rotationmatrix and position vector
 
+## TransInv()
 
+* **<font color='red'>Eigen::Matrix4d</font> TransInv(<font color='green'>const Eigen::Matrix4d</font>& transform)**
+
+  Function: Inverts a homogeneous transformation matrix
+
+  Inputs: A homogeneous transformation Matrix T
+
+  Returns: The inverse of T
 
 # V
 
